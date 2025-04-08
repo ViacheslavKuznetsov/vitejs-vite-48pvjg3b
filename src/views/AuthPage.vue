@@ -1,6 +1,7 @@
 <template>
-    <div class="auth-page">
-      <h1>Авторизация</h1>
+  <div class="page-container">
+    <h1 class="page-title">Авторизация</h1>
+    <div class="page-content">
       <form @submit.prevent="login">
         <div>
           <input 
@@ -20,24 +21,22 @@
         </div>
         <button type="submit">Войти</button>
       </form>
-  
-      <div class="social-auth">
-        <p>Или войти через:</p>
 
+      <div class="social-auth">
         <button class="vk-id-button" @click="authVK">
-            <!--<span class="vk-id-button__icon"></span>-->
-            <span class="vk-id-button__text">VK ID</span>
+          <span class="vk-id-button__icon"></span>
+          <span class="vk-id-button__text">Войти с VK ID</span>
         </button>
 
         <button class="yandex-id-button" @click="authYandex">
-            <!--<span class="yandex-id-button__icon"></span>-->
-            <span class="yandex-id-button__text">Яндекс ID</span>
+          <span class="yandex-id-button__icon"></span>
+          <span class="yandex-id-button__text">Войти с Яндекс ID</span>
         </button>
-
       </div>
     </div>
-  </template>
-  
+  </div>
+</template>
+
   <script>
   export default {
     name: 'AuthPage',
@@ -66,49 +65,33 @@
   }
   </script>
   
-  <style scoped>
-  .auth-page {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  input {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    box-sizing: border-box;
-  }
-  
-  button {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    cursor: pointer;
-    border: none;
-    border-radius: 4px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-  }
-  
-  button[type="submit"] {
-    background-color: #42b983;
-    color: white;
-  }
-  
-  .social-auth {
-    margin-top: 30px;
-    border-top: 1px solid #eee;
-    padding-top: 20px;
-  }
-  
-  .social-auth p {
-    margin-bottom: 15px;
-    color: #666;
-  }
+<style scoped>
+@import '@/assets/styles/common.css';
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  background-color: #42b983;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.social-auth {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
   
   .vk-id-button {
 
