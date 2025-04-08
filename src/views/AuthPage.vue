@@ -25,13 +25,13 @@
         <p>Или войти через:</p>
 
         <button class="vk-id-button" @click="authVK">
-            <span class="vk-id-button__icon"></span>
-            <span class="vk-id-button__text">Войти с VK ID</span>
+            <!--<span class="vk-id-button__icon"></span>-->
+            <span class="vk-id-button__text">VK ID</span>
         </button>
 
         <button class="yandex-id-button" @click="authYandex">
-            <span class="yandex-id-button__icon"></span>
-            <span class="yandex-id-button__text">Войти с Яндекс ID</span>
+            <!--<span class="yandex-id-button__icon"></span>-->
+            <span class="yandex-id-button__text">Яндекс ID</span>
         </button>
 
       </div>
@@ -151,6 +151,8 @@
 .vk-id-button__text {
   line-height: 1;
 }
+
+
 .yandex-id-button {
   display: flex;
   align-items: center;
@@ -180,7 +182,7 @@
   width: 24px;
   height: 24px;
   margin-right: 12px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M12.5 3C7.8 3 4 5.6 4 9c0 1.9 1.5 3.6 3.8 4.7l-1.3 2.4h3.3L12 14c.5.1 1 .1 1.5.1V9.5h-2V12c-1.1 0-2.2-.2-3-.6-.4-.2-.6-.5-.6-.9 0-.6 1.2-1.3 3.1-1.3h2.5V3h-2.5z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2.04 12c0-5.523 4.468-10 9.982-10C17.52 2 22 6.477 22 12s-4.468 10-9.978 10C6.518 22 2.04 17.523 2.04 12z' fill='%23FC3F1D'/%3E%3Cpath d='M12.814 12l-3.54-6h3.205l2.276 3.953L17.22 6h3.192l-5.248 9 5.58 9h-3.182l-2.74-4.674L12.86 18H9.316l3.498-6z' fill='white'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: center;
 }
@@ -188,5 +190,6 @@
 .yandex-id-button__text {
   line-height: 1;
 }
+
   
   </style>
