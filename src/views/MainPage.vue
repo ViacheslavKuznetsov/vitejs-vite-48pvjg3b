@@ -2,77 +2,121 @@
   <div class="page-container">
     <h1 class="page-title">Главная страница</h1>
     <div class="page-content">
-      <input type="file" @change="selectFile" class="file-input">
-      <input v-model="name" placeholder="Название" class="text-input">
-      <textarea v-model="description" placeholder="Описание"></textarea>
+      <FileUpload
+        :file="file"
+        :error-message="errorMessage"
+        :show-error="showError"
+        @file-selected="selectFile"
+        @update:showError="showError = $event"
+        @update:errorMessage="errorMessage = $event"
+      />
+
+      <InputField
+        v-model="name"
+        placeholder="Название"
+        type="input"
+      />
       
-      <div class="platforms">
-        <label v-for="platform in ['VK', 'Instagram', 'YouTube', 'TikTok']" :key="platform">
-          <input type="checkbox" v-model="platforms" :value="platform">
-          {{ platform }}
-        </label>
-      </div>
-      
+      <InputField
+        v-model="description"
+        placeholder="Описание"
+        type="textarea"
+      />
+
+      <PlatformSelection v-model:selected-platforms="platforms" />
+
       <button @click="download" class="submit-button">Загрузить</button>
     </div>
   </div>
 </template>
 
 <script>
+import FileUpload from '@/components/FileUpload.vue'
+import PlatformSelection from '@/components/PlatformSelection.vue'
+import InputField from '@/components/InputField.vue'
+
 export default {
   name: 'MainPage',
+  components: {
+    FileUpload,
+    PlatformSelection,
+    InputField
+  },
   data() {
     return {
       file: null,
       name: '',
       description: '',
-      platforms: []
+      platforms: [],
+      errorMessage: '',
+      showError: false,
+      errorTimeout: null,
+      hideTimeout: null
     }
   },
   methods: {
-    selectFile(e) {
-      this.file = e.target.files[0]
+    selectFile(file) {
+      if (this.hideTimeout) {
+        clearTimeout(this.hideTimeout)
+        this.hideTimeout = null
+      }
+      if (this.errorTimeout) {
+        clearTimeout(this.errorTimeout)
+        this.errorTimeout = null
+      }
+
+      if (file && file.type.startsWith('video/')) {
+        this.file = file
+        this.showError = false
+        this.errorMessage = ''
+      } else {
+        this.file = null
+        this.errorMessage = 'Пожалуйста, выберите видеофайл (MP4, AVI, MOV и т.д.)'
+        this.showError = true
+        
+        this.errorTimeout = setTimeout(() => {
+          this.showError = false
+          this.hideTimeout = setTimeout(() => {
+            this.errorMessage = ''
+          }, 300)
+        }, 5000)
+      }
     },
     download() {
+      if (!this.file || !this.file.type.startsWith('video/')) {
+        this.errorMessage = 'Необходимо выбрать видеофайл перед загрузкой'
+        this.showError = true
+        return
+      }
+
       console.log('Отправка данных:', {
         file: this.file,
         name: this.name,
         description: this.description,
         platforms: this.platforms
       })
+
+      this.resetForm()
+    },
+    resetForm() {
+      this.file = null
+      this.name = ''
+      this.description = ''
+      this.platforms = []
+      this.errorMessage = ''
+      this.showError = false
+      document.querySelector('.file-input').value = ''
     }
+  },
+  beforeUnmount() {
+    if (this.errorTimeout) clearTimeout(this.errorTimeout)
+    if (this.hideTimeout) clearTimeout(this.hideTimeout)
   }
 }
 </script>
 
 <style scoped>
 @import '@/assets/styles/common.css';
-
-.file-input, .text-input, textarea {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 15px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-textarea {
-  min-height: 100px;
-  resize: vertical;
-}
-
-.platforms {
-  margin: 20px 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.platforms label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
 
 .submit-button {
   width: 100%;
@@ -83,5 +127,17 @@ textarea {
   border-radius: 4px;
   font-weight: bold;
   cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.submit-button:hover {
+  background-color: #369f6e;
+}
+
+@media (max-width: 480px) {
+  .page-content {
+    min-width: unset;
+    padding: 0 15px;
+  }
 }
 </style>

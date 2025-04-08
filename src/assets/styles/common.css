@@ -1,7 +1,52 @@
-.page-container {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    padding: 0 20px;
-    justify-content: flex-start;
-  }
+.page-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 400px; /* Фиксированная максимальная ширина */
+  min-width: 400px; /* Фиксированная минимальная ширина */
+  margin: 20px auto 0;
+  padding-bottom: 40px;
+  overflow-x: hidden; /* Запрещаем горизонтальную прокрутку */
+
+  overflow-y: auto;
+  height: calc(100vh - 160px); /* Фиксированная высота */
+
+}
+
+/* Восстановленные стили заголовка */
+.page-title {
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding-top: 20px;
+  font-size: 24px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.page-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 3px;
+  background-color: #42b983;
+}
+
+.page-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+  width: 100%;
+  margin: 20px auto 0;
+  padding-bottom: 40px;
+  overflow-y: auto;
+  min-height: calc(100vh - 160px); /* Фиксируем минимальную высоту */
+  max-height: calc(100vh - 160px); /* Фиксируем максимальную высоту */
+}
