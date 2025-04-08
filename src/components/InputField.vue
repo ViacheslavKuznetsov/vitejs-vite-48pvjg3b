@@ -26,7 +26,9 @@
   </script>
   
   <style scoped>
-
+  .input-field {
+    max-width: none;
+  }
     .text-input, textarea {
     width: 100%;
     padding: 12px;
