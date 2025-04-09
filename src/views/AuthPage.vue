@@ -2,24 +2,31 @@
   <div class="page-container">
     <h1 class="page-title">Авторизация</h1>
     <div class="page-content">
-      <form @submit.prevent="login">
+      <form @submit.prevent="handleAuth">
         <div>
-          <input 
-            type="tel" 
-            v-model="phone" 
-            placeholder="Номер телефона" 
+          <input
+            type="tel"
+            v-model="phone"
+            placeholder="Номер телефона"
             required
           >
         </div>
         <div>
-          <input 
-            type="password" 
-            v-model="password" 
-            placeholder="Пароль" 
+          <input
+            type="password"
+            v-model="password"
+            placeholder="Пароль"
             required
           >
         </div>
-        <button type="submit">Войти</button>
+        
+        <button type="submit" :disabled="loading">
+          {{ loading ? 'Загрузка...' : 'Войти' }}
+        </button>
+
+        <div v-if="error" class="error-message">
+          {{ error }}
+        </div>
       </form>
 
       <div class="social-auth">
@@ -37,36 +44,70 @@
   </div>
 </template>
 
-  <script>
-  export default {
-    name: 'AuthPage',
-    data() {
-      return {
-        phone: '',
-        password: ''
+<script>
+import { supabase } from '@/supabase'
+
+export default {
+  name: 'AuthPage',
+  data() {
+    return {
+      phone: '',
+      password: '',
+      loading: false,
+      error: ''
+    }
+  },
+  methods: {
+    async handleAuth() {
+      this.loading = true
+      this.error = ''
+      
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          phone: this.phone,
+          password: this.password
+        })
+
+        if (error) throw error
+        
+        // Сохраняем сессию
+        localStorage.setItem('sb_token', data.session.access_token)
+        
+        // Перенаправляем на главную
+        this.$router.push('/main')
+      } catch (err) {
+        this.error = this.getErrorMessage(err)
+      } finally {
+        this.loading = false
       }
     },
-    methods: {
-      login() {
-        console.log('Вход с:', this.phone)
-        this.$router.push('/main')
-      },
-      authVK() {
-        // Реализация авторизации через VK
-        console.log('Авторизация через ВКонтакте')
-        // window.location.href = `https://oauth.vk.com/authorize?client_id=YOUR_APP_ID&redirect_uri=${window.location.origin}/auth/vk&display=page&scope=email&response_type=code`
-      },
-      authYandex() {
-        // Реализация авторизации через Яндекс
-        console.log('Авторизация через Яндекс')
-        // window.location.href = `https://oauth.yandex.ru/authorize?response_type=code&client_id=YOUR_CLIENT_ID&redirect_uri=${window.location.origin}/auth/yandex`
+    getErrorMessage(err) {
+      switch (err.message) {
+        case 'Invalid login credentials':
+          return 'Неверный номер или пароль'
+        case 'Email rate limit exceeded':
+          return 'Слишком много попыток. Попробуйте позже'
+        default:
+          return 'Ошибка авторизации'
       }
     }
   }
-  </script>
+}
+</script>
   
 <style scoped>
 @import '@/assets/styles/common.css';
+
+.error-message {
+  color: #ff4444;
+  margin-top: 1rem;
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 input {
   width: 100%;
   padding: 12px;
