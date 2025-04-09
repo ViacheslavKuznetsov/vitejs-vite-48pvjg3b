@@ -81,6 +81,7 @@ export default {
   data() {
     return {
       file: null,
+      coverImage: null,
       name: '',
       description: '',
       platforms: [],
@@ -108,6 +109,9 @@ export default {
     window.removeEventListener('resize', this.handleResize)
   },
   methods: {
+    selectCoverImage(file) {
+  this.coverImage = file
+},
     handleResize() {
       this.isMobile = window.innerWidth < 768
     },
