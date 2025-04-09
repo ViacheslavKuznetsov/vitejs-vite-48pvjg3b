@@ -13,6 +13,13 @@
           @update:errorMessage="errorMessage = $event"
         />
 
+        <ImageUpload
+          :file="coverImage"
+          @file-selected="selectCoverImage"
+        />
+
+        <HashTagsInput v-model="hashtags" />
+
         <InputField
           v-model="name"
           placeholder="Название"
@@ -44,13 +51,17 @@
 <script>
 import FileUpload from '@/components/FileUpload.vue'
 import PlatformSelection from '@/components/PlatformSelection.vue'
+import HashTagsInput from '@/components/HashTagsInput.vue'
 import InputField from '@/components/InputField.vue'
 import VideoPreview from '@/components/VideoPreview.vue'
+import ImageUpload from '@/components/ImageUpload.vue'
 
 export default {
   name: 'MainPage',
   components: {
     FileUpload,
+    ImageUpload,
+    HashTagsInput,
     PlatformSelection,
     InputField,
     VideoPreview
@@ -58,9 +69,11 @@ export default {
   data() {
     return {
       file: null,
+      coverImage: null,
       name: '',
       description: '',
       platforms: [],
+      hashtags: [],
       errorMessage: '',
       showError: false,
       errorTimeout: null,
@@ -79,6 +92,9 @@ export default {
     }
   },
   methods: {
+    selectCoverImage(file) {
+      this.coverImage = file
+    },
     async selectFile(file) {
       if (this.hideTimeout) {
         clearTimeout(this.hideTimeout)
@@ -186,6 +202,30 @@ export default {
 </script>
 
 <style scoped>
+
+.page-title {
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding-top: 20px;
+  font-size: 24px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.page-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 3px;
+  background-color: #42b983;
+}
+
 .page-container {
   width: 100%;
   max-width: 100%;
@@ -206,6 +246,7 @@ export default {
   width: 100%;
   max-width: 1600px;
   margin: 0 auto;
+  margin-top: 20px;
 }
 
 .form-section {
@@ -213,6 +254,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  max-width: 380px;
 }
 
 .page-container.expanded .content-wrapper {
@@ -222,7 +264,7 @@ export default {
 .video-section {
   position: sticky;
   top: 20px;
-  height: calc(100vh - 100px);
+  height: calc(60vh - 60px);
   background: #000;
   border-radius: 12px;
   overflow: hidden;
