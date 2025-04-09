@@ -91,7 +91,7 @@ export default {
       videoAspectRatio: 16/9,
       hashtags: [],
       isMobile: window.innerWidth < 768,
-      profileId: null,
+      profileId: [],
       userSocialProfiles: [
         { label: 'FXR LXVE', id: '1' },
         { label: 'Lxzy Slxth', id: '2' },

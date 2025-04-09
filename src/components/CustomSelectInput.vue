@@ -1,6 +1,15 @@
 <template>
   <div class="custom-select">
     <div class="selected-wrapper">
+      <span 
+        v-for="(item, index) in selectedItems" 
+        :key="index"
+        class="selected-item"
+        @click="removeItem(index)"
+      >
+        {{ getItemLabel(item) }}
+        <span class="remove">×</span>
+      </span>
       <input
         type="text"
         v-model="searchQuery"
@@ -29,7 +38,10 @@
 export default {
   props: {
     items: Array,
-    modelValue: [String, Number]
+    modelValue: {
+      type: Array,
+      default: () => []
+    }
   },
   emits: ['update:modelValue'],
   data() {
@@ -40,13 +52,21 @@ export default {
     }
   },
   computed: {
+    selectedItems() {
+      return this.modelValue.map(id => 
+        this.items.find(item => item.id === id)
+    )},
     filteredItems() {
       return this.items.filter(item => 
-        item.label.toLowerCase().includes(this.searchQuery.toLowerCase())
+        item.label.toLowerCase().includes(this.searchQuery.toLowerCase()) &&
+        !this.modelValue.includes(item.id)
       )
     }
   },
   methods: {
+    getItemLabel(item) {
+      return item?.label || 'Unknown'
+    },
     handleInput() {
       this.showSuggestions = true
     },
@@ -58,15 +78,45 @@ export default {
     },
     selectItem(item) {
       if (!item) return
-      this.$emit('update:modelValue', item.id)
+      this.$emit('update:modelValue', [...this.modelValue, item.id])
       this.searchQuery = ''
       this.showSuggestions = false
+    },
+    removeItem(index) {
+      const newValues = [...this.modelValue]
+      newValues.splice(index, 1)
+      this.$emit('update:modelValue', newValues)
     }
   }
 }
 </script>
 
 <style scoped>
+
+.selected-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.selected-item {
+  background: #f0f0f0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.remove {
+  margin-left: 6px;
+  font-weight: bold;
+}
+
 .custom-select {
   width: 100%;
   margin-bottom: 15px;
@@ -74,12 +124,13 @@ export default {
 }
 
 input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  box-sizing: border-box;
+  border: none;
+  outline: none;
+  padding: 4px;
+  flex: 1;
+  min-width: 120px;
 }
+
 
 .suggestions {
   position: absolute;
