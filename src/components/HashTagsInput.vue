@@ -116,4 +116,12 @@
       color: #aaa;
     }
   }
+
+  .hashtags-container {
+  width: 100%;
+}
+
+.tag-input {
+  width: 100%;
+}
   </style>
