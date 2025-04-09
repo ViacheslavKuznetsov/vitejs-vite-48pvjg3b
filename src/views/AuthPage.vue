@@ -1,240 +1,219 @@
 <template>
   <div class="page-container">
     <h1 class="page-title">Авторизация</h1>
-    
-    <form @submit.prevent="handleAuth" class="auth-form">
-      <InputField
-        v-model="login"
-        placeholder="Email или номер телефона"
-        type="text"
-        :error="loginError"
-        @input="validateLogin"
-      />
+    <div class="page-content">
+      <form @submit.prevent="handleAuth">
+        <div>
+          <input
+            type="tel"
+            v-model="phone"
+            placeholder="Номер телефона"
+            required
+          >
+        </div>
+        <div>
+          <input
+            type="password"
+            v-model="password"
+            placeholder="Пароль"
+            required
+          >
+        </div>
+        
+        <button type="submit" :disabled="loading">
+          {{ loading ? 'Загрузка...' : 'Войти' }}
+        </button>
 
-      <InputField
-        v-model="password"
-        placeholder="Пароль"
-        type="password"
-        :error="passwordError"
-      />
+        <div v-if="error" class="error-message">
+          {{ error }}
+        </div>
+      </form>
 
-      <button 
-        type="submit" 
-        :disabled="loading"
-        class="submit-button"
-        aria-live="polite"
-      >
-        <span v-if="!loading">Войти</span>
-        <LoadingSpinner v-else size="small" />
-      </button>
+      <div class="social-auth">
+        <button class="vk-id-button" @click="authVK">
+          <span class="vk-id-button__icon"></span>
+          <span class="vk-id-button__text">Войти с VK ID</span>
+        </button>
 
-      <div v-if="error" class="error-message" role="alert">
-        {{ error }}
+        <button class="yandex-id-button" @click="authYandex">
+          <span class="yandex-id-button__icon"></span>
+          <span class="yandex-id-button__text">Войти с Яндекс ID</span>
+        </button>
       </div>
-
-      <div class="auth-links">
-        <router-link to="/signup" class="auth-link">
-          Нет аккаунта? Зарегистрироваться
-        </router-link>
-        <router-link to="/reset-password" class="auth-link">
-          Забыли пароль?
-        </router-link>
-      </div>
-    </form>
-
-    <div class="oauth-providers">
-      <button 
-        class="oauth-button vk"
-        @click="handleOAuth('vk')"
-        aria-label="Войти через VK ID"
-      >
-        <VkIcon class="icon" />
-        <span>VK ID</span>
-      </button>
-
-      <button 
-        class="oauth-button yandex"
-        @click="handleOAuth('yandex')"
-        aria-label="Войти через Яндекс ID"
-      >
-        <YandexIcon class="icon" />
-        <span>Яндекс ID</span>
-      </button>
     </div>
   </div>
 </template>
 
 <script>
 import { supabase } from '@/supabase'
-import InputField from '@/components/InputField.vue'
-import LoadingSpinner from '@/components/LoadingSpinner.vue'
-import VkIcon from '@/assets/icons/vk.svg?component'
-import YandexIcon from '@/assets/icons/yandex.svg?component'
 
 export default {
   name: 'AuthPage',
-  components: { 
-    InputField,
-    LoadingSpinner,
-    VkIcon,
-    YandexIcon
-  },
   data() {
     return {
-      login: '',
+      phone: '',
       password: '',
       loading: false,
-      error: '',
-      loginError: '',
-      passwordError: ''
+      error: ''
     }
   },
   methods: {
-    validateLogin() {
-      const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.login)
-      const isPhone = /^\+?[1-9]\d{1,14}$/.test(this.login)
-      this.loginError = (isEmail || isPhone) ? '' : 'Некорректный формат'
-    },
-
     async handleAuth() {
-      if (!this.validateForm()) return
-      
       this.loading = true
       this.error = ''
-
+      
       try {
         const { data, error } = await supabase.auth.signInWithPassword({
-          [this.login.includes('@') ? 'email' : 'phone']: this.login,
+          phone: this.phone,
           password: this.password
         })
 
         if (error) throw error
         
+        // Сохраняем сессию
+        localStorage.setItem('sb_token', data.session.access_token)
+        
+        // Перенаправляем на главную
         this.$router.push('/main')
       } catch (err) {
-        this.error = this.parseAuthError(err)
+        this.error = this.getErrorMessage(err)
       } finally {
         this.loading = false
       }
     },
-
-    async handleOAuth(provider) {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: { 
-          redirectTo: window.location.origin
-        }
-      })
-
-      if (error) {
-        this.error = this.parseAuthError(error)
-      }
-    },
-
-    validateForm() {
-      let valid = true
-      if (!this.login.trim()) {
-        this.loginError = 'Обязательное поле'
-        valid = false
-      }
-      if (!this.password) {
-        this.passwordError = 'Введите пароль'
-        valid = false
-      }
-      return valid
-    },
-
-    parseAuthError(err) {
+    getErrorMessage(err) {
       switch (err.message) {
         case 'Invalid login credentials':
-          return 'Неверные данные для входа'
+          return 'Неверный номер или пароль'
         case 'Email rate limit exceeded':
           return 'Слишком много попыток. Попробуйте позже'
         default:
-          return 'Ошибка авторизации: ' + err.message
+          return 'Ошибка авторизации'
       }
     }
   }
 }
 </script>
-
+  
 <style scoped>
-.page-container {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-.auth-form {
-  background: var(--bg-light);
-  padding: 2rem;
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-sm);
-}
-
-.oauth-providers {
-  margin-top: 2rem;
-  display: grid;
-  gap: 1rem;
-}
-
-.oauth-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: filter 0.2s;
-}
-
-.oauth-button.vk {
-  background: #0077FF;
-  color: white;
-}
-
-.oauth-button.yandex {
-  background: #000;
-  color: white;
-}
-
-.icon {
-  width: 24px;
-  height: 24px;
-}
+@import '@/assets/styles/common.css';
 
 .error-message {
-  color: var(--error-color);
-  margin: 1rem 0;
-  font-size: 0.9rem;
+  color: #ff4444;
+  margin-top: 1rem;
 }
 
-.submit-button {
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+input {
   width: 100%;
   padding: 12px;
-  margin-top: 1rem;
-  background: var(--primary-color);
+  margin: 8px 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  background-color: #42b983;
   color: white;
   border: none;
   border-radius: 4px;
+  font-weight: bold;
   cursor: pointer;
 }
 
-.auth-links {
-  margin-top: 1.5rem;
+.social-auth {
+  margin-top: 30px;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  text-align: center;
+  gap: 12px;
+}
+  
+  .vk-id-button {
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 300px;
+    height: 44px;
+    margin: 10px auto;
+    padding: 0 16px;
+    background-color: #0077FF;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+  }
+
+.vk-id-button:hover {
+
+    background-color: #0066DD;
+
 }
 
-.auth-link {
-  color: var(--primary-color);
-  text-decoration: none;
-  font-size: 0.9rem;
+.vk-id-button__icon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  margin-right: 12px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M12.65 17.39c-5.59 0-8.65-3.82-8.84-10.23h2.98c.15 4.88 2.26 6.93 3.48 7.34V7.16h2.77v3.43c1.22-.13 2.51-2.15 2.95-3.43h2.77c-.39 1.65-1.96 3.13-3.13 3.68 1.17.49 3.04 1.89 3.56 4.55h-3.05c-.43-1.45-1.51-2.59-3.44-2.77v2.77c-1.3-.17-3.48-.91-3.48-3.56H6.8c0 3.82 3.13 5.9 5.85 5.9V17.39z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
 }
-</style>
+
+.vk-id-button__text {
+  line-height: 1;
+}
+
+
+.yandex-id-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 300px;
+  height: 44px;
+  margin: 10px auto;
+  padding: 0 16px;
+  background-color: #000;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.yandex-id-button:hover {
+  background-color: #333;
+}
+
+.yandex-id-button__icon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  margin-right: 12px;
+  background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2.04 12c0-5.523 4.468-10 9.982-10C17.52 2 22 6.477 22 12s-4.468 10-9.978 10C6.518 22 2.04 17.523 2.04 12z' fill='%23FC3F1D'/%3E%3Cpath d='M12.814 12l-3.54-6h3.205l2.276 3.953L17.22 6h3.192l-5.248 9 5.58 9h-3.182l-2.74-4.674L12.86 18H9.316l3.498-6z' fill='white'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.yandex-id-button__text {
+  line-height: 1;
+}
+
+  
+  </style>

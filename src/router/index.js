@@ -9,24 +9,12 @@ const routes = [
   { 
     path: '/main',
     component: () => import('@/views/MainPage.vue'),
-    meta: { requiresAuth: true } 
+    meta: { requiresAuth: false } 
   },
-  {
-    path: '/signup',
-    component: () => import('@/views/SignUpPage.vue'),
-    meta: { 
-      hideNav: true,
-      transition: 'fade' 
-    }
-  },
+
   {
     path: '/:pathMatch(.*)*',
     component: () => import('@/views/NotFoundPage.vue'),
-    meta: { hideNav: true }
-  },
-  {
-    path: '/verify-email',
-    component: () => import('@/views/VerifyEmailPage.vue'),
     meta: { hideNav: true }
   }
 ]
@@ -34,13 +22,6 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes
-})
-
-router.beforeEach((to) => {
-  const isAuthenticated = localStorage.getItem('sb_token')
-  if (to.meta.requiresAuth && !isAuthenticated) {
-    return '/'
-  }
 })
 
 export default router
