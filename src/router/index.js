@@ -1,17 +1,41 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import AuthPage from '../views/AuthPage.vue'
-import MainPage from '../views/MainPage.vue'
-import SettingsPage from '../views/SettingsPage.vue'
 
 const routes = [
-  { path: '/', component: AuthPage },
-  { path: '/main', component: MainPage },
-  { path: '/settings', component: SettingsPage }
+  { 
+    path: '/', 
+    component: () => import('@/views/AuthPage.vue'),
+    meta: { hideNav: true } 
+  },
+  { 
+    path: '/main',
+    component: () => import('@/views/MainPage.vue'),
+    meta: { requiresAuth: true } 
+  },
+  {
+    path: '/signup',
+    component: () => import('@/views/SignUpPage.vue'),
+    meta: { 
+      hideNav: true,
+      transition: 'fade' 
+    }
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    component: () => import('@/views/NotFoundPage.vue'),
+    meta: { hideNav: true }
+  }
 ]
 
 const router = createRouter({
   history: createWebHistory(),
   routes
+})
+
+router.beforeEach((to) => {
+  const isAuthenticated = localStorage.getItem('sb_token')
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    return '/'
+  }
 })
 
 export default router

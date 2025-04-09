@@ -1,184 +1,185 @@
 <template>
   <div class="page-container" :class="{ 'expanded': file }">
     <h1 class="page-title">Главная страница</h1>
+    
     <div class="content-wrapper">
-      <div class="form-section">
-        <CustomSelectInput 
-          v-model="profileId"
-          :items="userSocialProfiles"
+      <form class="form-section" @submit.prevent="handleSubmit">
+        <CustomSelectInput
+          v-model="selectedProfileIds"
+          :items="userProfiles"
+          label="Выберите профиль"
         />
 
         <FileUpload
-          :file="file"
-          :error-message="errorMessage"
-          :show-error="showError"
-          @file-selected="selectFile"
+          v-model:file="uploadData.file"
+          :max-size="maxFileSize"
+          @error="handleUploadError"
         />
 
         <ImageUpload
-          :file="coverImage"
-          @file-selected="selectCoverImage"
-          @clear="coverImage = null"
+          v-model:file="uploadData.cover"
+          @clear="uploadData.cover = null"
         />
 
-        <HashTagsInput v-model="hashtags" />
+        <HashTagsInput v-model="uploadData.tags" />
 
         <InputField
-          v-model="name"
-          placeholder="Название"
-          type="input"
+          v-model="uploadData.title"
+          placeholder="Название видео"
+          :max-length="100"
+          required
         />
-        
+
         <InputField
-          v-model="description"
+          v-model="uploadData.description"
           placeholder="Описание"
           type="textarea"
+          :max-length="500"
         />
 
-        <PlatformSelection v-model:selected-platforms="platforms" />
-
-        <DoItLater 
-          v-model="isScheduled"
-          v-model:date="scheduledDate"
-          v-model:time="scheduledTime"
+        <PlatformSelection
+          v-model:selected-platforms="uploadData.platforms"
+          :available-platforms="availablePlatforms"
         />
 
-        <button @click="download" class="submit-button">Загрузить</button>
-      </div>
+        <DoItLater
+          v-model="uploadData.scheduled"
+          v-model:date="uploadData.scheduleDate"
+          v-model:time="uploadData.scheduleTime"
+        />
 
-      <VideoPreview 
+        <button 
+          type="submit" 
+          class="submit-button"
+          :disabled="uploading"
+        >
+          {{ uploading ? 'Загрузка...' : 'Опубликовать' }}
+        </button>
+      </form>
+
+      <VideoPreview
         v-if="file && !isMobile"
-        :video-url="videoUrl" 
+        :video-url="previewUrl"
         :aspect-ratio="videoAspectRatio"
-        class="video-section"
       />
     </div>
   </div>
 </template>
 
 <script>
-import FileUpload from '@/components/FileUpload.vue'
-import ImageUpload from '@/components/ImageUpload.vue'
-import PlatformSelection from '@/components/PlatformSelection.vue'
-import InputField from '@/components/InputField.vue'
-import VideoPreview from '@/components/VideoPreview.vue'
-import HashTagsInput from '@/components/HashTagsInput.vue'
-import CustomSelectInput from '@/components/CustomSelectInput.vue'
-import DoItLater from '@/components/DoItLater.vue'
+import { mapState, mapActions } from 'pinia'
+import { useUploadStore } from '@/stores/upload'
+import { useUserStore } from '@/stores/user'
 
 export default {
-  name: 'MainPage',
-  components: {
-    FileUpload,
-    ImageUpload,
-    PlatformSelection,
-    InputField,
-    VideoPreview,
-    HashTagsInput,
-    CustomSelectInput,
-    DoItLater
-  },
   data() {
     return {
-      file: null,
-      coverImage: null,
-      name: '',
-      description: '',
-      platforms: [],
-      errorMessage: '',
-      showError: false,
-      videoUrl: '',
-      videoAspectRatio: 16/9,
-      hashtags: [],
-      isMobile: window.innerWidth < 768,
-      profileId: [],
-      userSocialProfiles: [
-        { label: 'FXR LXVE', id: '1' },
-        { label: 'Lxzy Slxth', id: '2' },
-        { label: 'Lxzy Dxzy', id: '3' }
-      ],
-      isScheduled: false,
-      scheduledDate: '',
-      scheduledTime: ''
+      maxFileSize: 1024 * 1024 * 500, // 500MB
+      uploadData: {
+        file: null,
+        cover: null,
+        title: '',
+        description: '',
+        tags: [],
+        platforms: [],
+        scheduled: false,
+        scheduleDate: '',
+        scheduleTime: ''
+      },
+      uploadError: null
     }
   },
-  mounted() {
-    window.addEventListener('resize', this.handleResize)
-  },
-  beforeUnmount() {
-    window.removeEventListener('resize', this.handleResize)
+  computed: {
+    ...mapState(useUserStore, ['userProfiles']),
+    ...mapState(useUploadStore, ['uploading', 'error']),
+    
+    isMobile() {
+      return window.innerWidth < 768
+    },
+    
+    previewUrl() {
+      return this.uploadData.file ? URL.createObjectURL(this.uploadData.file) : ''
+    }
   },
   methods: {
-    selectCoverImage(file) {
-  this.coverImage = file
-},
-    handleResize() {
-      this.isMobile = window.innerWidth < 768
-    },
-    selectFile(file) {
-      if (file && file.type.startsWith('video/')) {
-        this.file = file
-        this.videoUrl = URL.createObjectURL(file)
+    ...mapActions(useUploadStore, ['uploadVideo']),
+    
+    async handleSubmit() {
+      if (!this.validateForm()) return
+      
+      try {
+        await this.uploadVideo({
+          ...this.uploadData,
+          profiles: this.selectedProfileIds
+        })
+        
+        this.resetForm()
+        this.$router.push('/success')
+      } catch (error) {
+        this.uploadError = this.parseError(error)
       }
     },
-    download() {
-      console.log({
-        file: this.file,
-        coverImage: this.coverImage,
-        profileId: this.profileId,
-        hashtags: this.hashtags,
-        schedule: this.isScheduled ? `${this.scheduledDate}T${this.scheduledTime}` : null
-      })
+    
+    validateForm() {
+      let valid = true
+      if (!this.uploadData.file) {
+        this.uploadError = 'Выберите видео для загрузки'
+        valid = false
+      }
+      return valid
+    },
+    
+    handleUploadError(message) {
+      this.uploadError = message
+    },
+    
+    resetForm() {
+      this.uploadData = {
+        file: null,
+        cover: null,
+        title: '',
+        description: '',
+        tags: [],
+        platforms: [],
+        scheduled: false,
+        scheduleDate: '',
+        scheduleTime: ''
+      }
+    },
+    
+    parseError(error) {
+      switch (error.code) {
+        case 'storage/unauthorized':
+          return 'Ошибка авторизации'
+        case 'storage/limit-exceeded':
+          return 'Превышен лимит размера файла'
+        default:
+          return 'Ошибка загрузки видео'
+      }
+    }
+  },
+  beforeUnmount() {
+    if (this.previewUrl) {
+      URL.revokeObjectURL(this.previewUrl)
     }
   }
 }
 </script>
 
 <style scoped>
-
-.page-container {
-  width: 100%;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
 .content-wrapper {
   display: grid;
-  gap: 40px;
+  gap: 2rem;
+  grid-template-columns: 1fr;
 }
 
-.form-section {
-  width: 100%;
-  min-width: 400px;
-  max-width: 400px;
-  margin: 0 auto;
-}
-
-.video-section {
-  display: none;
+@media (min-width: 1024px) {
+  .content-wrapper {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .submit-button {
-  width: 100%;
-  padding: 12px;
-  background-color: #42b983;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-@media (max-width: 768px) {
-  .form-section {
-    max-width: 100%;
-  }
-  
-  .content-wrapper {
-    grid-template-columns: 1fr;
-  }
-  
-  .video-section {
-    display: none !important;
-  }
+  margin-top: 1.5rem;
 }
 </style>

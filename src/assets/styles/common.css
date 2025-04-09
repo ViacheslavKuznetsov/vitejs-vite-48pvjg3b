@@ -1,20 +1,9 @@
-.page-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-
-  min-width: 400px; /* Фиксированная минимальная ширина */
-  margin: 20px auto 0;
-  padding-bottom: 40px;
-  overflow-x: hidden; /* Запрещаем горизонтальную прокрутку */
-
-  overflow-y: auto;
-  height: calc(100vh - 160px); /* Фиксированная высота */
-
+:root {
+  --form-bg: #fff;
+  --error-color: #ff4444;
+  --accent-color: #42b983;
 }
 
-/* Восстановленные стили заголовка */
 .page-title {
   height: 80px;
   display: flex;
@@ -35,7 +24,7 @@
   transform: translateX(-50%);
   width: 50px;
   height: 3px;
-  background-color: #42b983;
+  background-color: var(--accent-color);
 }
 
 .page-content {
@@ -45,7 +34,56 @@
   width: 100%;
   margin: 20px auto 0;
   padding-bottom: 40px;
+  overflow-x: hidden;
   overflow-y: auto;
-  min-height: calc(100vh - 160px); /* Фиксируем минимальную высоту */
-  max-height: calc(100vh - 160px); /* Фиксируем максимальную высоту */
+  min-width: min(400px, 100%);
+  min-height: calc(100vh - 160px);
+}
+
+.auth-form {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: var(--form-bg);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.error-message {
+  color: var(--error-color);
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  min-height: 1rem;
+  display: block;
+  transition: opacity 0.3s;
+  opacity: 0;
+}
+
+.error-message.active {
+  opacity: 1;
+}
+
+.input-field.error {
+  border-color: var(--error-color);
+  box-shadow: 0 0 0 1px var(--error-color);
+  animation: shake 0.3s;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@media (max-width: 480px) {
+  .page-content {
+    padding: 10px;
+    min-height: auto;
+  }
+  
+  .auth-form {
+    padding: 1rem;
+    box-shadow: none;
+  }
 }
