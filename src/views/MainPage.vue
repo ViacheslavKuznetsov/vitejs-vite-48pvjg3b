@@ -5,7 +5,7 @@
       <div class="form-section">
         <CustomSelectInput 
           v-model="profileId"
-          :items="options"
+          :items="userSocialProfiles"
         />
 
         <FileUpload
@@ -92,10 +92,10 @@ export default {
       hashtags: [],
       isMobile: window.innerWidth < 768,
       profileId: null,
-      options: [
-        { label: 'Вариант 1', id: '1' },
-        { label: 'Вариант 2', id: '2' },
-        { label: 'Вариант 3', id: '3' }
+      userSocialProfiles: [
+        { label: 'FXR LXVE', id: '1' },
+        { label: 'Lxzy Slxth', id: '2' },
+        { label: 'Lxzy Dxzy', id: '3' }
       ],
       isScheduled: false,
       scheduledDate: '',
@@ -124,6 +124,7 @@ export default {
     download() {
       console.log({
         file: this.file,
+        coverImage: this.coverImage,
         profileId: this.profileId,
         hashtags: this.hashtags,
         schedule: this.isScheduled ? `${this.scheduledDate}T${this.scheduledTime}` : null
