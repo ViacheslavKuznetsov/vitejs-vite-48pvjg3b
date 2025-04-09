@@ -20,14 +20,6 @@
       />
 
       <InputField
-        v-model="phone"
-        placeholder="Номер телефона"
-        type="tel"
-        :error="phoneError"
-        @input="validatePhone"
-      />
-
-      <InputField
         v-model="password"
         placeholder="Пароль"
         type="password"
@@ -63,9 +55,11 @@
         {{ error }}
       </div>
 
-      <router-link to="/" class="auth-link">
-        Уже есть аккаунт? Войти
-      </router-link>
+      <div class="auth-links">
+        <router-link to="/login" class="auth-link">
+          Уже есть аккаунт? Войти
+        </router-link>
+      </div>
     </form>
   </div>
 </template>
@@ -85,14 +79,12 @@ export default {
     return {
       fullName: '',
       email: '',
-      phone: '',
       password: '',
       confirmPassword: '',
       loading: false,
       error: '',
       fullNameError: '',
       emailError: '',
-      phoneError: '',
       passwordError: '',
       confirmPasswordError: ''
     }
@@ -111,7 +103,6 @@ export default {
       return (
         this.fullNameValid &&
         this.emailValid &&
-        this.phoneValid &&
         this.passwordsMatch &&
         this.hasMinLength &&
         this.hasUpperCase &&
@@ -124,9 +115,6 @@ export default {
     emailValid() {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email)
     },
-    phoneValid() {
-      return /^\+?[1-9]\d{1,14}$/.test(this.phone)
-    },
     passwordsMatch() {
       return this.password === this.confirmPassword
     }
@@ -138,10 +126,6 @@ export default {
     validateEmail() {
       this.emailError = this.emailValid ? '' : 'Некорректный email'
     },
-    validatePhone() {
-      this.phoneError = this.phoneValid ? '' : 'Некорректный номер'
-    },
-
     async handleSignUp() {
       if (!this.validateForm()) return
       
@@ -151,43 +135,28 @@ export default {
       try {
         const { data, error } = await supabase.auth.signUp({
           email: this.email,
-          phone: this.phone,
           password: this.password,
           options: {
-            data: {
-              full_name: this.fullName.trim()
-            }
+            data: { full_name: this.fullName.trim() },
+            emailRedirectTo: window.location.origin + '/verify-email'
           }
         })
 
         if (error) throw error
 
         if (data.user) {
-          await this.createUserProfile(data.user.id)
-          this.$router.push('/verify')
+          this.$router.push({
+            path: '/verify-email',
+            query: { email: this.email }
+          })
         }
       } catch (err) {
+        console.error('Registration error:', err)
         this.error = this.parseError(err)
       } finally {
         this.loading = false
       }
     },
-
-    async createUserProfile(userId) {
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      const { error } = await supabase
-        .from('profiles')
-        .insert({
-          user_id: userId,
-          full_name: this.fullName.trim(),
-          email: this.email,
-          phone: this.phone
-        })
-
-      if (error) throw error
-    },
-
     validateForm() {
       let valid = true
       
@@ -201,11 +170,6 @@ export default {
         valid = false
       }
       
-      if (!this.phoneValid) {
-        this.phoneError = 'Обязательное поле'
-        valid = false
-      }
-      
       if (!this.passwordsMatch) {
         this.confirmPasswordError = 'Пароли не совпадают'
         valid = false
@@ -213,13 +177,14 @@ export default {
       
       return valid
     },
-
     parseError(err) {
       switch (err.message) {
         case 'User already registered':
           return 'Пользователь уже существует'
         case 'Password should be at least 6 characters':
           return 'Пароль слишком короткий'
+        case 'new row violates row-level security policy':
+          return 'Ошибка безопасности. Попробуйте позже'
         default:
           return 'Ошибка регистрации: ' + err.message
       }
@@ -227,6 +192,7 @@ export default {
   }
 }
 </script>
+
 
 <style scoped>
 .page-container {
@@ -289,6 +255,11 @@ export default {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+  background: var(--primary-hover);
 }
 
 .auth-link {
@@ -298,5 +269,9 @@ export default {
   color: var(--primary-color);
   text-decoration: none;
   font-size: 0.9rem;
+}
+
+.auth-link:hover {
+  text-decoration: underline;
 }
 </style>

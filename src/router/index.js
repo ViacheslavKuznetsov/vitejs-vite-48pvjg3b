@@ -23,6 +23,11 @@ const routes = [
     path: '/:pathMatch(.*)*',
     component: () => import('@/views/NotFoundPage.vue'),
     meta: { hideNav: true }
+  },
+  {
+    path: '/verify-email',
+    component: () => import('@/views/VerifyEmailPage.vue'),
+    meta: { hideNav: true }
   }
 ]
 
