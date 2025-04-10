@@ -19,6 +19,8 @@
           @keydown.down="moveDown"
           @keydown.up="moveUp"
           @keydown.enter="selectItem"
+          @keydown.esc="handleEscape"
+          @blur="handleBlur"
           placeholder="Выберите профиль"
           @focus="showSuggestions = true"
         >
@@ -33,16 +35,21 @@
       </div>
     </div>
 
-    <ul v-if="showSuggestions" class="suggestions">
-      <li 
-        v-for="(item, index) in filteredItems"
-        :key="item.id"
-        :class="{ active: index === activeIndex }"
-        @click="selectItem(item)"
-      >
-        {{ item.label }}
-      </li>
-    </ul>
+    <div v-if="showSuggestions" class="suggestions-container">
+      <ul v-if="filteredItems.length > 0" class="suggestions">
+        <li 
+          v-for="(item, index) in filteredItems"
+          :key="item.id"
+          :class="{ active: index === activeIndex }"
+          @click="selectItem(item)"
+        >
+          {{ item.label }}
+        </li>
+      </ul>
+      <div v-else class="no-results">
+        Нет подходящих профилей
+      </div>
+    </div>
   </div>
 </template>
 
@@ -88,28 +95,84 @@ export default {
       this.showSuggestions = !this.showSuggestions
     },
     moveDown() {
-      this.activeIndex = Math.min(this.activeIndex + 1, this.filteredItems.length - 1)
+      if (!this.showSuggestions && this.filteredItems.length > 0) {
+        this.showSuggestions = true
+        this.activeIndex = 0 // Устанавливаем первый элемент активным
+        return
+      }
+      
+      if (this.filteredItems.length === 0) return
+      
+      this.activeIndex = Math.min(
+        this.activeIndex + 1,
+        this.filteredItems.length - 1
+      )
     },
     moveUp() {
       this.activeIndex = Math.max(this.activeIndex - 1, -1)
     },
-    selectItem(item) {
+    selectItem() {
+      if (this.filteredItems.length === 0) return
+      
+      // Берем элемент по активному индексу или первый элемент списка
+      const item = this.activeIndex >= 0 
+        ? this.filteredItems[this.activeIndex]
+        : this.filteredItems[0]
+
       if (!item) return
+      
       this.$emit('update:modelValue', [...this.modelValue, item.id])
       this.searchQuery = ''
       this.showSuggestions = false
+      this.activeIndex = -1 // Сбрасываем активный индекс
     },
     removeItem(index) {
       const newValues = [...this.modelValue]
       newValues.splice(index, 1)
       this.$emit('update:modelValue', newValues)
+    },
+    handleEscape() {
+      if (this.showSuggestions) {
+        this.showSuggestions = false
+        this.activeIndex = -1
+      }
+    },
+    handleBlur() {
+      // Небольшая задержка для обработки клика на элементы списка
+      setTimeout(() => {
+        this.showSuggestions = false
+        this.activeIndex = -1
+      }, 200)
     }
   }
 }
 </script>
 
 <style scoped>
-/* Новые стили для кнопки */
+/* Добавим новые стили */
+.suggestions-container {
+  position: absolute;
+  width: 100%;
+  z-index: 1000;
+}
+
+.no-results {
+  padding: 12px;
+  color: #666;
+  font-style: italic;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .no-results {
+    background: #2a2a2a;
+    color: #aaa;
+    border-color: #444;
+  }
+}
 .input-wrapper {
   position: relative;
   flex: 1;
