@@ -1,16 +1,18 @@
 <template>
     <div class="page-container">
-      <h1 class="page-title">Менеджер вертикальных видео</h1>
+      <h1 class="page-title">MultiPost Hub</h1>
       <div class="page-content">
         <!-- Заглушка для будущего описания -->
         <div class="description-placeholder">
-          <p>Описание приложения появится здесь...</p>
+            <p>text</p>
           <router-link to="/sign-in" class="auth-link">Войти в систему</router-link>
         </div>
       </div>
     </div>
   </template>
   
+
+
   <style scoped>
   .description-placeholder {
     text-align: center;
