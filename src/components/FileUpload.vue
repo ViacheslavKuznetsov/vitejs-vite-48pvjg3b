@@ -1,9 +1,5 @@
 <template>
-  <div 
-    class="file-upload-container"
-    @mouseover="hover = true"
-    @mouseleave="hover = false"
-  >
+  <div class="file-upload-container">
     <label class="file-input-label">
       <input 
         type="file" 
@@ -13,20 +9,17 @@
         ref="fileInput"
       >
       <span class="file-input-button">
-        <span class="file-name">
-          {{ file ? file.name : 'Выберите видеофайл' }}
-        </span>
-        <transition name="fade">
-          <span 
-            v-if="file && hover"
-            class="clear-icon"
-            @click.stop="clearFile"
-          >
-            ×
-          </span>
-        </transition>
+        {{ file ? file.name : 'Выберите видеофайл' }}
       </span>
     </label>
+
+    <span 
+      v-if="file" 
+      class="clear-button"
+      @click.stop="clearFile"
+    >
+      ×
+    </span>
   </div>
 </template>
 
@@ -37,11 +30,6 @@ export default {
     file: File,
   },
   emits: ['file-selected', 'clear'],
-  data() {
-    return {
-      hover: false
-    }
-  },
   methods: {
     handleFileChange(e) {
       const file = e.target.files[0]
@@ -50,7 +38,6 @@ export default {
     clearFile() {
       this.$refs.fileInput.value = ''
       this.$emit('clear')
-      this.hover = false
     }
   }
 }
@@ -60,10 +47,13 @@ export default {
 .file-upload-container {
   width: 100%;
   margin-bottom: 15px;
+  display: flex;
+  gap: 8px;
 }
 
 .file-input-label {
-  display: block;
+  flex: 1;
+  cursor: pointer;
 }
 
 .file-input {
@@ -79,46 +69,23 @@ export default {
   border-radius: 4px;
   text-align: center;
   cursor: pointer;
-}
-
-.file-upload-container {
-  position: relative;
-}
-
-.file-name {
-  max-width: 80%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  display: inline-block;
-  vertical-align: middle;
 }
 
-.clear-icon {
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  font-size: 1.5em;
-  color: #ff4444;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
+.clear-button {
   display: flex;
   align-items: center;
-  justify-content: center;
-  transition: opacity 0.3s;
+  padding: 0 16px;
+  background-color: #42b983; 
+  border-radius: 4px;
+  cursor: pointer;
+  color: white;
+  transition: background-color 0.3s;
 }
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
+.clear-button:hover {
+  background-color: #369f6e; 
 }
 </style>
