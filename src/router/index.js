@@ -2,13 +2,13 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
   { 
-    path: '/', 
-    component: () => import('@/views/AuthPage.vue'),
+    path: '/sign-in', 
+    component: () => import('@/views/SignInPage.vue'),
     meta: { hideNav: true } 
   },
   { 
-    path: '/main',
-    component: () => import('@/views/MainPage.vue'),
+    path: '/video-upload',
+    component: () => import('@/views/VideoUpload.vue'),
     meta: { requiresAuth: false } 
   },
 

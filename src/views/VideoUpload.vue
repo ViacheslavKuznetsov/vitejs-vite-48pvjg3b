@@ -1,6 +1,6 @@
 <template>
   <div class="page-container" :class="{ 'expanded': file }">
-    <h1 class="page-title">Главная страница</h1>
+    <h1 class="page-title">Загрузить вертикальное видео</h1>
     <div class="content-wrapper">
       <div class="form-section">
         <CustomSelectInput 

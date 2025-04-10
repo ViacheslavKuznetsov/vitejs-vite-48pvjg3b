@@ -2,8 +2,8 @@
   <div id="app">
     <!-- Навигация будет скрыта на странице авторизации -->
     <nav v-if="showNavigation && $route.meta.hideNav !== true">
-      <router-link to="/main">Главная</router-link> |
-      <router-link to="/settings">Настройки</router-link>
+      <router-link to="/video-upload">Загрузка видео</router-link> |
+      <router-link to="/logout">Выйти</router-link>
     </nav>
     
     <!-- Здесь отображаются страницы -->
