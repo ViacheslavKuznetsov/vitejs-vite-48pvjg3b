@@ -44,6 +44,7 @@ export default {
 </script>
 
 <style scoped>
+
 .file-upload-container {
   width: 100%;
   margin-bottom: 15px;
@@ -86,6 +87,6 @@ export default {
 }
 
 .clear-button:hover {
-  background-color: #369f6e; 
+  background-color: #369f6e;  
 }
 </style>

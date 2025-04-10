@@ -51,7 +51,7 @@ nav a {
 }
 
 nav a.router-link-exact-active {
-  color: #42b983;
+  color: var(--primary-color);
 }
 
 /* Общие стили элементов форм */
@@ -64,7 +64,7 @@ input, textarea, button {
 }
 
 button {
-  background-color: #42b983;
+  background-color: var(--primary-color);
   color: white;
   border: none;
   border-radius: 4px;
@@ -73,6 +73,6 @@ button {
 }
 
 button:hover {
-  background-color: #369f6e;
+  background-color: var(--primary-hover);
 }
 </style>

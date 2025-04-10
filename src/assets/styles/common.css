@@ -1,7 +1,34 @@
 :root {
-  --form-bg: #fff;
+  /* Основные цвета */
+  --primary-color: #42b983;
+  --primary-hover: #369f6e;
+  --secondary-color: #646cff;
+  --secondary-hover: #535bf2;
+  
+  /* Фоны */
+  --bg-light: #ffffff;
+  --bg-dark: #2a2a2a;
+  --bg-grey: #f0f0f0;
+  
+  /* Текст */
+  --text-primary: #2c3e50;
+  --text-secondary: #666;
+  
+  /* Ошибки */
   --error-color: #ff4444;
-  --accent-color: #42b983;
+  
+  /* Границы */
+  --border-color: #ddd;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-light: #1a1a1a;
+    --bg-grey: #333;
+    --text-primary: #ffffff;
+    --text-secondary: #ccc;
+    --border-color: #444;
+  }
 }
 
 .page-title {
