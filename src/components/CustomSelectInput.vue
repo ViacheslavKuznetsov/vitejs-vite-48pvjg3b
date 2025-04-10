@@ -10,17 +10,29 @@
         {{ getItemLabel(item) }}
         <span class="remove">×</span>
       </span>
-      <input
-        type="text"
-        v-model="searchQuery"
-        @input="handleInput"
-        @keydown.down="moveDown"
-        @keydown.up="moveUp"
-        @keydown.enter="selectItem"
-        placeholder="Выберите профиль"
-      >
+
+      <div class="input-wrapper">
+        <input
+          type="text"
+          v-model="searchQuery"
+          @input="handleInput"
+          @keydown.down="moveDown"
+          @keydown.up="moveUp"
+          @keydown.enter="selectItem"
+          placeholder="Выберите профиль"
+          @focus="showSuggestions = true"
+        >
+        <button 
+          class="toggle-button"
+          @click="toggleList"
+          type="button"
+          :class="{ rotated: showSuggestions }"
+        >
+          ▼
+        </button>
+      </div>
     </div>
-    
+
     <ul v-if="showSuggestions" class="suggestions">
       <li 
         v-for="(item, index) in filteredItems"
@@ -55,7 +67,8 @@ export default {
     selectedItems() {
       return this.modelValue.map(id => 
         this.items.find(item => item.id === id)
-    )},
+      )
+    },
     filteredItems() {
       return this.items.filter(item => 
         item.label.toLowerCase().includes(this.searchQuery.toLowerCase()) &&
@@ -69,6 +82,10 @@ export default {
     },
     handleInput() {
       this.showSuggestions = true
+      this.activeIndex = -1
+    },
+    toggleList() {
+      this.showSuggestions = !this.showSuggestions
     },
     moveDown() {
       this.activeIndex = Math.min(this.activeIndex + 1, this.filteredItems.length - 1)
@@ -92,6 +109,36 @@ export default {
 </script>
 
 <style scoped>
+/* Новые стили для кнопки */
+.input-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 150px;
+}
+
+.toggle-button {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  transition: transform 0.2s;
+  width: 24px;
+  height: 24px;
+  margin-top: 0;
+}
+
+.toggle-button.rotated {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.toggle-button:hover {
+  color: #333;
+}
 
 .selected-wrapper {
   display: flex;
@@ -101,6 +148,7 @@ export default {
   border: 1px solid #ddd;
   border-radius: 4px;
   padding: 8px;
+  min-height: 42px;
 }
 
 .selected-item {
@@ -126,9 +174,10 @@ export default {
 input {
   border: none;
   outline: none;
-  padding: 4px;
-  flex: 1;
+  padding: 4px 30px 4px 4px;
+  width: 100%;
   min-width: 120px;
+  background: transparent;
 }
 
 
