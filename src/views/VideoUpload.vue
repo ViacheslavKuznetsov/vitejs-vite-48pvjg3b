@@ -9,10 +9,12 @@
         />
 
         <FileUpload
-          :file="file"
+        :file="file"
+          @file-selected="selectFile"
+          @clear="clearVideoFile"
           :error-message="errorMessage"
           :show-error="showError"
-          @file-selected="selectFile"
+
         />
 
         <ImageUpload
@@ -109,6 +111,11 @@ export default {
     window.removeEventListener('resize', this.handleResize)
   },
   methods: {
+    clearVideoFile() {
+    this.file = null
+    this.videoUrl = ''
+    URL.revokeObjectURL(this.videoUrl)
+  },
     selectCoverImage(file) {
   this.coverImage = file
 },
