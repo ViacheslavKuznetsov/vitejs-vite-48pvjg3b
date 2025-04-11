@@ -17,6 +17,11 @@ const routes = [
     meta: { requiresAuth: false } 
   },
   {
+    path: '/profiles-manager',
+    component: () => import('@/views/ProfilesManager.vue'),
+    meta: { title: 'Мои профили' }
+  },
+  {
     path: '/:pathMatch(.*)*',
     component: () => import('@/views/NotFoundPage.vue'),
     meta: { hideNav: true }

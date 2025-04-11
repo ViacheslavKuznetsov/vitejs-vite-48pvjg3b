@@ -9,12 +9,10 @@
         />
 
         <FileUpload
-        :file="file"
-          @file-selected="selectFile"
-          @clear="clearVideoFile"
+          :file="file"
           :error-message="errorMessage"
           :show-error="showError"
-
+          @file-selected="selectFile"
         />
 
         <ImageUpload
@@ -69,7 +67,7 @@ import CustomSelectInput from '@/components/CustomSelectInput.vue'
 import DoItLater from '@/components/DoItLater.vue'
 
 export default {
-  name: 'MainPage',
+  name: 'VideoUpload',
   components: {
     FileUpload,
     ImageUpload,
@@ -111,11 +109,6 @@ export default {
     window.removeEventListener('resize', this.handleResize)
   },
   methods: {
-    clearVideoFile() {
-    this.file = null
-    this.videoUrl = ''
-    URL.revokeObjectURL(this.videoUrl)
-  },
     selectCoverImage(file) {
   this.coverImage = file
 },
