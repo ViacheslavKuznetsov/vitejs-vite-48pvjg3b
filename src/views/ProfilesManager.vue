@@ -7,13 +7,9 @@
       <div class="left-column">
         <ProfilesList 
           :groups="groups"
-          @delete="handleDeleteProfile"
           @toggle-group="handleToggleGroup"
         />
         <AddProfileSection
-          :platforms="availablePlatforms"
-          :platform-labels="platformLabels"
-          @add="handleAddProfile"
         />
       </div>
 
@@ -42,39 +38,24 @@ export default {
         name: 'FXR LXVE',
         isOpen: false,
         profiles: [
-          { id: 1, platform: 'vk', name: 'ВК Группа', username: '@fxr_lxve', ownerID: '2121412' },
+          { id: 1, platform: 'vk', name: 'VK', username: '@fxr_lxve', ownerID: '2121412' },
           { id: 2, platform: 'instagram', name: 'Instagram', username: '@fxr.lxve', ownerID: '135325' }
         ]
       },
       {
         id: 2,
-        name: 'Другая группа',
+        name: 'dmitry.juda',
         isOpen: false,
-        profiles: [],
         profiles: [
-          { id: 1, platform: 'vk', name: 'ВК Группа', username: '@fxr_lxve', ownerID: '2121412' },
-          { id: 2, platform: 'instagram', name: 'Instagram', username: '@fxr.lxve', ownerID: '135325' }
+          { id: 1, platform: 'youtube', name: 'YouTube shorts', username: '@dmitry.juda', ownerID: '3413' },
+          { id: 2, platform: 'instagram', name: 'Instagram reels', username: '@dmitry.juda', ownerID: '174' }
         ]
       }
     ],
-      availablePlatforms: ['vk', 'yandex', 'instagram', 'youtube'],
-      platformLabels: {
-        vk: 'ВКонтакте',
-        yandex: 'Яндекс',
-        instagram: 'Instagram',
-        youtube: 'YouTube'
-      },
       selectedProfile: null
     }
   },
   methods: {
-    handleDeleteProfile(profileId) {
-      this.socialProfiles = this.socialProfiles.filter(p => p.id !== profileId)
-    },
-    handleAddProfile(platform) {
-      // Логика добавления нового профиля
-      console.log('Adding profile for:', platform)
-    },
     handleToggleGroup(groupId) {
       this.groups = this.groups.map(group => 
         group.id === groupId 

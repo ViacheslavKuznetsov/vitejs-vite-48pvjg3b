@@ -120,8 +120,15 @@ export default {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 0;
+  padding: 10px;
   height: 44px;
+  background: var(--bg-light);
+  border-radius: 6px;
+  margin: 4px 0;
+  cursor: pointer;
+}
+.profile-item:hover {
+  background-color: var(--bg-dark);
 }
 
 .profile-icon {
@@ -132,18 +139,28 @@ export default {
 }
 
 .profile-info {
-  line-height: 1.4;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .profile-name {
   font-size: 0.95em;
   color: var(--text-primary);
   margin: 0;
+  min-width: 120px;
 }
 
 .profile-username {
   font-size: 0.85em;
   color: var(--text-secondary);
   margin: 0;
+  font-family: monospace;
 }
+
+
+
+
+
 </style>
