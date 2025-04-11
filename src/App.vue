@@ -3,6 +3,7 @@
     <!-- Навигация будет скрыта на странице авторизации -->
     <nav v-if="showNavigation && $route.meta.hideNav !== true">
       <router-link to="/video-upload">Загрузка видео</router-link> |
+      <router-link to="/profiles-manager">Мои профили</router-link> |
       <router-link to="/logout">Выйти</router-link>
     </nav>
     
@@ -16,8 +17,8 @@ export default {
   name: 'App',
   computed: {
     showNavigation() {
-      // Проверяем доступность $route
-      return this.$route && this.$route.path !== '/'
+      const hiddenPaths = ['/', '/sign-in']
+      return this.$route && !hiddenPaths.includes(this.$route.path)
     }
   }
 }
