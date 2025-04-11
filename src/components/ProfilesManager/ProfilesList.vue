@@ -85,7 +85,7 @@ export default {
 }
 
 .group-header:hover {
-  background-color: var(--bg-dark);
+  background-color: var(--bg-light-grey);
 }
 
 .icon-title-wrapper {
@@ -126,9 +126,11 @@ export default {
   border-radius: 6px;
   margin: 4px 0;
   cursor: pointer;
+  transition: background-color 0.2s;
 }
+
 .profile-item:hover {
-  background-color: var(--bg-dark);
+  background-color: var(--bg-grey)
 }
 
 .profile-icon {
