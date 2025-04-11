@@ -22,29 +22,37 @@
               <button class="delete-button">×</button>
             </div>
           </div>
-        </div>
-  
-        <!-- Правый блок - Добавление нового профиля -->
-        <div class="add-profile">
-          <div class="section-header">
-            <h2>Подключить новый профиль</h2>
-          </div>
-          
-          <div class="platforms-grid">
-                <button 
-                v-for="platform in availablePlatforms"
-                :key="platform"
-                class="platform-button"
-                >
-                <img 
-                    :src="getPlatformIcon(platform)"
-                    class="platform-icon"
-                    :alt="platform"
-                >
-                {{ platformLabels[platform] }}
-                </button>
+          <!-- Нижний левый блок блок - Добавление нового профиля -->
+          <div class="add-profile">
+            <div class="section-header">
+              <h2>Подключить новый профиль</h2>
             </div>
+            
+            <div class="platforms-grid">
+                  <button 
+                  v-for="platform in availablePlatforms"
+                  :key="platform"
+                  class="platform-button"
+                  >
+                  <img 
+                      :src="getPlatformIcon(platform)"
+                      class="platform-icon"
+                      :alt="platform"
+                  >
+                  {{ platformLabels[platform] }}
+                  </button>
+              </div>
+          </div>
         </div>
+        <!-- Правый блок - поля профиля -->
+        <div class="profile-info">
+            <div class="section-header">
+              <h2>Данные профиля</h2>
+            </div>
+            
+            Тут будут поля выбранного слева профиля
+
+          </div>
       </div>
     </div>
   </template>
