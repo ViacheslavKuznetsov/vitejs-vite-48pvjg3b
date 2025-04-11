@@ -1,24 +1,26 @@
 /* styles/global.css */
+
 :root {
   /* Основные цвета */
   --primary-color: #42b983;
   --primary-hover: #369f6e;
   --secondary-color: #646cff;
   --secondary-hover: #535bf2;
-
+  
   /* Фоны */
   --bg-light: #ffffff;
   --bg-dark: #2a2a2a;
   --bg-grey: #f0f0f0;
-  --bg-light-grey: #f5f5f5;
-
+  
+  /* Кнопки файлового ввода */
+  --file-button-bg: var(--primary-color);
+  --file-button-hover: var(--primary-hover);
+  --button-text: #ffffff;
+  
   /* Текст */
   --text-primary: #2c3e50;
   --text-secondary: #666;
-
-  /* Ошибки */
-  --error-color: #ff4444;
-
+  
   /* Границы */
   --border-color: #ddd;
 }
@@ -30,39 +32,45 @@
     --text-primary: #ffffff;
     --text-secondary: #ccc;
     --border-color: #444;
+    
+    /* Адаптация для файловых кнопок */
+    --file-button-bg: #2d5043;
+    --file-button-hover: #1f3d31;
+    --button-text: #e0e0e0;
   }
 }
-  
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-  
-  #app {
-    min-width: 400px;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
 
-  .page-title {
-    font-size: 24px;
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    margin: 0 0 20px 0;
-  }
-  
-  .page-title::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 50px;
-    height: 3px;
-    background-color: #42b983;
-  }
+/* Остальные существующие стили остаются без изменений */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+#app {
+  min-width: 400px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-title {
+  font-size: 24px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: 0 0 20px 0;
+}
+
+.page-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 3px;
+  background-color: var(--primary-color);
+}

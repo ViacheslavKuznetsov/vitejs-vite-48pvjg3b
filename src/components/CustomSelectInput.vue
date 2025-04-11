@@ -149,7 +149,12 @@ export default {
 </script>
 
 <style scoped>
-/* Добавим новые стили */
+.custom-select {
+  width: 100%;
+  margin-bottom: 15px;
+  position: relative;
+}
+
 .suggestions-container {
   position: absolute;
   width: 100%;
@@ -158,21 +163,14 @@ export default {
 
 .no-results {
   padding: 12px;
-  color: #666;
+  color: var(--text-secondary);
   font-style: italic;
-  background: white;
-  border: 1px solid #ddd;
+  background: var(--bg-light);
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   margin-top: 4px;
 }
 
-@media (prefers-color-scheme: dark) {
-  .no-results {
-    background: #2a2a2a;
-    color: #aaa;
-    border-color: #444;
-  }
-}
 .input-wrapper {
   position: relative;
   flex: 1;
@@ -187,7 +185,7 @@ export default {
   background: none;
   border: none;
   cursor: pointer;
-  color: #666;
+  color: var(--text-secondary);
   padding: 0;
   transition: transform 0.2s;
   width: 24px;
@@ -200,7 +198,7 @@ export default {
 }
 
 .toggle-button:hover {
-  color: #333;
+  color: var(--text-primary);
 }
 
 .selected-wrapper {
@@ -208,49 +206,39 @@ export default {
   flex-wrap: wrap;
   gap: 8px;
   align-items: center;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   padding: 8px;
   min-height: 42px;
 }
 
 .selected-item {
-  background: #f0f0f0;
+  background: var(--bg-grey);
   padding: 4px 8px;
   border-radius: 4px;
   display: flex;
   align-items: center;
   cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.selected-item:hover {
+  background-color: var(--bg-hover);
 }
 
 .remove {
   margin-left: 6px;
   font-weight: bold;
+  color: var(--text-secondary);
 }
-
-.custom-select {
-  width: 100%;
-  margin-bottom: 15px;
-  position: relative;
-}
-
-input {
-  border: none;
-  outline: none;
-  padding: 4px 30px 4px 4px;
-  width: 100%;
-  min-width: 120px;
-  background: transparent;
-}
-
 
 .suggestions {
   position: absolute;
   width: 100%;
   max-height: 200px;
   overflow-y: auto;
-  border: 1px solid #ddd;
-  background: white;
+  border: 1px solid var(--border-color);
+  background: var(--bg-light);
   z-index: 1000;
   margin-top: 4px;
   list-style: none;
@@ -260,20 +248,27 @@ input {
 .suggestions li {
   padding: 8px;
   cursor: pointer;
+  color: var(--text-primary);
+  background: var(--bg-light);
 }
 
 .suggestions li.active {
-  background-color: #f0f0f0;
+  background-color: var(--bg-grey);
 }
 
 @media (prefers-color-scheme: dark) {
-  .suggestions {
-    background: #2a2a2a;
-    border-color: #444;
-  }
-  
   .suggestions li.active {
-    background-color: #333;
+    background-color: var(--bg-dark);
   }
+}
+
+input {
+  border: none;
+  outline: none;
+  padding: 4px 30px 4px 4px;
+  width: 100%;
+  min-width: 120px;
+  background: transparent;
+  color: var(--text-primary);
 }
 </style>

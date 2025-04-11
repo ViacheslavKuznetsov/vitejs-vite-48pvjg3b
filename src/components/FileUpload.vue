@@ -44,7 +44,6 @@ export default {
 </script>
 
 <style scoped>
-
 .file-upload-container {
   width: 100%;
   margin-bottom: 15px;
@@ -65,28 +64,33 @@ export default {
   display: block;
   width: 100%;
   padding: 12px;
-  background-color: #42b983;
-  color: white;
+  background-color: var(--file-button-bg);
+  color: var(--button-text);
   border-radius: 4px;
   text-align: center;
   cursor: pointer;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  transition: background-color 0.3s;
+}
+
+.file-input-button:hover {
+  background-color: var(--file-button-hover);
 }
 
 .clear-button {
   display: flex;
   align-items: center;
   padding: 0 16px;
-  background-color: #42b983; 
+  background-color: var(--file-button-bg);
   border-radius: 4px;
   cursor: pointer;
-  color: white;
+  color: var(--button-text);
   transition: background-color 0.3s;
 }
 
 .clear-button:hover {
-  background-color: #369f6e;  
+  background-color: var(--file-button-hover);
 }
 </style>

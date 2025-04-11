@@ -161,11 +161,14 @@ export default {
 .submit-button {
   width: 100%;
   padding: 12px;
-  background-color: #42b983;
+  background-color: var(--primary-color);
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+}
+.submit-button:hover {
+  background-color: var(--primary-hover);
 }
 
 @media (max-width: 768px) {
