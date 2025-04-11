@@ -78,11 +78,10 @@ export default {
   justify-content: center;
   width: 100%;
   height: 100%;
-  background-color: #646cff;
+  background-color: var(--image-upload-button-bg);
   border-radius: 4px;
   transition: all 0.3s ease;
   padding: 12px 24px;
-
 }
 
 .button-content.has-file {
@@ -91,10 +90,10 @@ export default {
 }
 
 .text {
-  color: white;
+  color: var(--button-text);
   transition: transform 0.3s ease;
   overflow: hidden;
-  text-overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -102,32 +101,23 @@ export default {
   display: flex;
   align-items: center;
   padding: 0 16px;
-  background-color: #646cff;
+  background-color: var(--image-upload-button-bg);
   border-radius: 4px;
   cursor: pointer;
-  color: white;
+  color: var(--button-text);
   transition: background-color 0.3s;
 }
 
 .clear-button:hover {
-  background-color: #535bf2;
+  background-color: var(--image-upload-button-hover);
 }
 
 .divider {
-  display: none; /* Убираем разделитель */
+  display: none;
 }
 
 .image-input {
   display: none;
-}
-
-/* Анимация текста */
-.image-input-label:not(.has-file) .text {
-  transform: translateX(0);
-}
-
-.image-input-label.has-file .text {
-  transform: translateX(0);
 }
 
 @media (max-width: 480px) {

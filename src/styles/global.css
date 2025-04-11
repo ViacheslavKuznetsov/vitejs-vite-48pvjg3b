@@ -6,6 +6,11 @@
   --primary-hover: #369f6e;
   --secondary-color: #646cff;
   --secondary-hover: #535bf2;
+
+  /* Специфичные для ImageUpload */
+  --image-upload-button-bg: var(--secondary-color);
+  --image-upload-button-hover: var(--secondary-hover);
+  --button-text: #ffffff;
   
   /* Фоны */
   --bg-light: #ffffff;
@@ -36,6 +41,12 @@
     /* Адаптация для файловых кнопок */
     --file-button-bg: #2d5043;
     --file-button-hover: #1f3d31;
+    --button-text: #e0e0e0;
+
+    
+    /* Адаптация для ImageUpload */
+    --image-upload-button-bg: #4a4f8c;
+    --image-upload-button-hover: #3b3f6e;
     --button-text: #e0e0e0;
   }
 }
